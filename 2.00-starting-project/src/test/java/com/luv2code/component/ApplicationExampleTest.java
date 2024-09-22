@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ApplicationExampleTest {
@@ -36,6 +36,10 @@ public class ApplicationExampleTest {
 
     @Autowired
     StudentGrades studentGrades;
+
+    @Autowired
+    ApplicationContext context;
+
     @BeforeEach
     void beforeEach () {
         count = count +1;
@@ -60,6 +64,58 @@ public class ApplicationExampleTest {
     public void addGradeResultsForStudentGradesAssertNotEquals() {
         assertNotEquals(0, studentGrades.addGradeResultsForSingleClass(
                 student.getStudentGrades().getMathGradeResults()));
+    }
+
+    @DisplayName("is grade greater")
+    @Test
+    public void isGradeGreaterStudentGrades () {
+        assertTrue(studentGrades.isGradeGreater(90,75), "Should be true");
+    }
+
+    @DisplayName("is grade greater false")
+    @Test
+    public void isGradeGreaterStudentGradesAssertFalse () {
+        assertFalse(studentGrades.isGradeGreater(89,92),"should be false");
+    }
+
+    @DisplayName("check null for student grades")
+    @Test
+    public void checkNullForStudentGrades () {
+        assertNotNull(studentGrades.checkNull(student.getStudentGrades().getMathGradeResults()), "" +
+                "object should not be null");
+    }
+
+    @DisplayName("create student without grade init")
+    @Test
+    public void createStudentWithoutGradeInit () {
+        CollegeStudent studentTwo = context.getBean("collegeStudent", CollegeStudent.class);
+        studentTwo.setFirstname("Chad");
+        studentTwo.setLastname("Darby");
+        studentTwo.setEmailAddress("chad@darby.com");
+
+        assertNotNull(studentTwo.getFirstname());
+        assertNotNull(studentTwo.getLastname());
+        assertNotNull(studentTwo.getEmailAddress());
+        assertNull(studentGrades.checkNull(studentTwo.getStudentGrades()));
+    }
+
+    @DisplayName("verify students are prototype")
+    @Test
+    public void verifyStudentsArePrototype () {
+        CollegeStudent studentTwo = context.getBean("collegeStudent", CollegeStudent.class);
+        assertNotSame(studentTwo, student);
+    }
+
+
+    @DisplayName("find grade point average")
+    @Test
+    public void findGradePointAverage() {
+        assertAll("testing all assert equals",
+                () -> assertEquals(353.25, studentGrades.addGradeResultsForSingleClass(
+                        student.getStudentGrades().getMathGradeResults())),
+                () -> assertEquals(88.31, studentGrades.findGradePointAverage(
+                        student.getStudentGrades().getMathGradeResults()))
+                );
     }
 
     @Test
