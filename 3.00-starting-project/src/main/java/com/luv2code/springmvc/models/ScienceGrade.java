@@ -45,4 +45,6 @@ public class ScienceGrade implements Grade {
     public void setGrade(double grade) {
         this.grade = grade;
     }
+
+
 }
