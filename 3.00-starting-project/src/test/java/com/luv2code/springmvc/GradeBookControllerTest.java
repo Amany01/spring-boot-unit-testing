@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -47,6 +48,10 @@ public class GradeBookControllerTest {
     private MockMvc mockMvc;
     @Mock
     private StudentAndGradeService studentCreateServiceMock;
+    @Value("${sql.script.create.student}")
+    private String sqlAddStudent;
+    @Value("${sql.delete.student}")
+    private String sqlDeleteStudent;
 
     @BeforeAll
     public static void setup () {
@@ -58,8 +63,7 @@ public class GradeBookControllerTest {
 
     @BeforeEach
     public void setupDatabase () {
-        jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address)" +
-                "VALUES (1, 'Eric', 'Roby', 'eric@roby.com')");
+        jdbc.execute(sqlAddStudent);
     }
 
     @Test
@@ -130,7 +134,7 @@ public class GradeBookControllerTest {
 
     @AfterEach
     public void setupAfterTransaction () {
-        jdbc.execute("DELETE FROM student");
+        jdbc.execute(sqlDeleteStudent);
     }
 
 
