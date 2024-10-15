@@ -1,9 +1,6 @@
 package com.luv2code.springmvc;
 
-import com.luv2code.springmvc.models.CollegeStudent;
-import com.luv2code.springmvc.models.HistoryGrade;
-import com.luv2code.springmvc.models.MathGrade;
-import com.luv2code.springmvc.models.ScienceGrade;
+import com.luv2code.springmvc.models.*;
 import com.luv2code.springmvc.repository.HistoryGradesDao;
 import com.luv2code.springmvc.repository.MathGradesDao;
 import com.luv2code.springmvc.repository.ScienceGradesDao;
@@ -148,6 +145,28 @@ public class StudentAndGradeServiceTest {
 
     }
 
+    @Test
+    public void studentInformation () {
+        GradebookCollegeStudent gradebookCollegeStudent = studentService.studentInformation(1);
+        assertNotNull(gradebookCollegeStudent);
+        assertEquals(1,gradebookCollegeStudent.getId());
+        assertEquals("Eric", gradebookCollegeStudent.getFirstname());
+        assertEquals("Roby", gradebookCollegeStudent.getLastname());
+        assertEquals("eric@roby.com", gradebookCollegeStudent.getEmailAddress());
+        assertTrue(gradebookCollegeStudent.getStudentGrades()
+                .getMathGradeResults().size() == 1);
+        assertTrue(gradebookCollegeStudent.getStudentGrades()
+                .getHistoryGradeResults().size() == 1);
+        assertTrue(gradebookCollegeStudent.getStudentGrades()
+                .getScienceGradeResults().size() == 1);
+    }
+
+    @Test
+    public void studentInformationServiceReturnNull () {
+        GradebookCollegeStudent gradebookCollegeStudent = studentService.studentInformation(0);
+        assertNull(gradebookCollegeStudent);
+    }
+
     @AfterEach
     public void setupAfterTransaction () {
 
@@ -156,7 +175,5 @@ public class StudentAndGradeServiceTest {
         jdbc.execute("DELETE FROM science_grade");
         jdbc.execute("DELETE FROM history_grade");
     }
-
-
 
 }
