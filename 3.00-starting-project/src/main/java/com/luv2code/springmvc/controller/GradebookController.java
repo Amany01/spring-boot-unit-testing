@@ -25,7 +25,7 @@ public class GradebookController {
     }
 
     @PostMapping(value = "/")
-    public String createStudent (@ModelAttribute("student") CollegeStudent student, Model m) {
+    public String createStudent(@ModelAttribute("student") CollegeStudent student, Model m) {
         studentService.createStudent(student.getFirstname(), student.getLastname(), student.getEmailAddress());
         Iterable<CollegeStudent> collegeStudents = studentService.getGradeBook();
         m.addAttribute("students", collegeStudents);
@@ -33,7 +33,7 @@ public class GradebookController {
     }
 
     @GetMapping("/delete/student/{id}")
-    public String deleteStudent (@PathVariable int id, Model m) {
+    public String deleteStudent(@PathVariable int id, Model m) {
         if (!studentService.checkIfStudentIsNull(id)) {
             return "error";
         }
@@ -49,14 +49,14 @@ public class GradebookController {
             return "error";
         }
         studentService.configureStudentInformation(id, m);
-        return "studentinformation";
+        return "studentInformation";
     }
 
     @PostMapping(value = "/grades")
-    public String createGrade (@RequestParam("grade") double grade,
-                               @RequestParam("gradeType") String gradeType,
-                               @RequestParam("studentId") int studentId,
-                               Model m) {
+    public String createGrade(@RequestParam("grade") double grade,
+                              @RequestParam("gradeType") String gradeType,
+                              @RequestParam("studentId") int studentId,
+                              Model m) {
         if (!studentService.checkIfStudentIsNull(studentId)) {
             return "error";
         }
@@ -65,7 +65,22 @@ public class GradebookController {
             return "error";
         }
         studentService.configureStudentInformation(studentId, m);
-        return "studentinformation";
+        return "studentInformation";
+    }
+
+    @GetMapping("/grades/{id}/{gardeType}")
+    public String deleteGrade(
+            @PathVariable int id,
+            @PathVariable String gradeType,
+            Model m) {
+        int studentId = studentService.deleteGrade(id, gradeType);
+        if (studentId == 0) {
+            return "error";
+        }
+        studentService.configureStudentInformation(studentId, m);
+        return "studentInformation";
     }
 
 }
+
+

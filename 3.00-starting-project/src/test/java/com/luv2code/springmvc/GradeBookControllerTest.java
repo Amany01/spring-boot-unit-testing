@@ -2,6 +2,8 @@ package com.luv2code.springmvc;
 
 import com.luv2code.springmvc.models.CollegeStudent;
 import com.luv2code.springmvc.models.GradebookCollegeStudent;
+import com.luv2code.springmvc.models.MathGrade;
+import com.luv2code.springmvc.repository.MathGradesDao;
 import com.luv2code.springmvc.repository.StudentDao;
 import com.luv2code.springmvc.service.StudentAndGradeService;
 import org.h2.command.dml.MergeUsing;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -66,6 +69,9 @@ public class GradeBookControllerTest {
     private String sqlDeleteScienceGrade;
     @Value("${sql.delete.history.grade}")
     private String sqlDeleteHistoryGrade;
+
+    @Autowired
+    private MathGradesDao mathGradesDao;
 
     @BeforeAll
     public static void setup () {
@@ -155,7 +161,7 @@ public class GradeBookControllerTest {
                 .get("/studentinformation/{id}", 1))
                 .andExpect(status().isOk()).andReturn();
         ModelAndView mav = mvcResult.getModelAndView();
-        ModelAndViewAssert.assertViewName(mav,"studentinformation");
+        ModelAndViewAssert.assertViewName(mav,"studentInformation");
     }
 
     @Test
@@ -179,7 +185,7 @@ public class GradeBookControllerTest {
                 .param("gradeType", "math")
                 .param("studentId","1")).andExpect(status().isOk()).andReturn();
         ModelAndView mav = mvcResult.getModelAndView();
-        ModelAndViewAssert.assertViewName(mav,"studentinformation");
+        ModelAndViewAssert.assertViewName(mav,"studentInformation");
         student = studentService.studentInformation(1);
         assertEquals(2, student.getStudentGrades().getMathGradeResults().size());
     }
@@ -206,6 +212,7 @@ public class GradeBookControllerTest {
                 .andExpect(status().isOk()).andReturn();
     }
 
+
     @AfterEach
     public void setupAfterTransaction () {
 
@@ -213,8 +220,6 @@ public class GradeBookControllerTest {
         jdbc.execute(sqlDeleteMathGrade);
         jdbc.execute(sqlDeleteScienceGrade);
         jdbc.execute(sqlDeleteHistoryGrade);
-
     }
-
 
 }
